@@ -61,3 +61,8 @@ C:\Users\artur\source\repos\Pipe\Pipe\obj\Debug\net8.0-windows\Pipe.ImportDataFo
 C:\Users\artur\source\repos\Pipe\Pipe\obj\Debug\net8.0-windows\Pipe.ImportInspectionsForm.resources
 C:\Users\artur\source\repos\Pipe\Pipe\obj\Debug\net8.0-windows\Pipe.ImportPipelinesForm.resources
 C:\Users\artur\source\repos\Pipe\Pipe\bin\Debug\net8.0-windows\EPPlus.System.Drawing.dll
+C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.csproj.AssemblyReference.cache
+C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.csproj.GenerateResource.cache
+C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.dll
+C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\refint\Pipe.dll
+C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.pdb

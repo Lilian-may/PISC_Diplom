@@ -9,16 +9,41 @@ namespace Pipe
     {
         public InspectionManagerForm()
         {
-            InitializeComponent();
-            LoadPipelines();
+            try
+            {
+                InitializeComponent();
+                LoadPipelines();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Ошибка при загрузке формы управления инспекциями.\n\n" +
+                    $"Техническая ошибка: {ex.Message}",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private void LoadPipelines()
         {
-            var dt = DatabaseHelper.ExecuteQuery("SELECT id, name FROM pipelines");
-            cmbPipeline.DataSource = dt;
-            cmbPipeline.DisplayMember = "name";
-            cmbPipeline.ValueMember = "id";
+            try
+            {
+                var dt = DatabaseHelper.ExecuteQuery("SELECT id, name FROM pipelines");
+                cmbPipeline.DataSource = dt;
+                cmbPipeline.DisplayMember = "name";
+                cmbPipeline.ValueMember = "id";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Не удалось загрузить список трубопроводов.\n\n" +
+                    "Проверьте подключение к базе данных.\n\n" +
+                    $"Техническая ошибка: {ex.Message}",
+                    "Ошибка загрузки",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         public void RefreshData()
@@ -28,57 +53,142 @@ namespace Pipe
 
         private void LoadInspections()
         {
-            if (cmbPipeline.SelectedValue == null) return;
-            int pid = (int)cmbPipeline.SelectedValue;
-            var dt = DatabaseHelper.ExecuteQuery("SELECT id, inspection_date, tool_type, speed_mps, coverage_percent, status FROM inspections WHERE pipeline_id=@pid", new MySqlParameter("@pid", pid));
-            dataGridView.DataSource = dt;
-            dataGridView.AutoResizeColumns();
+            try
+            {
+                if (cmbPipeline.SelectedValue == null) return;
+                int pid = (int)cmbPipeline.SelectedValue;
+                var dt = DatabaseHelper.ExecuteQuery("SELECT id, inspection_date, tool_type, speed_mps, coverage_percent, status FROM inspections WHERE pipeline_id=@pid", new MySqlParameter("@pid", pid));
+                dataGridView.DataSource = dt;
+                dataGridView.AutoResizeColumns();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Не удалось загрузить список инспекций.\n\n" +
+                    "Проверьте подключение к базе данных.\n\n" +
+                    $"Техническая ошибка: {ex.Message}",
+                    "Ошибка загрузки",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private void cmbPipeline_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadInspections();
+            try
+            {
+                LoadInspections();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Ошибка при смене трубопровода: {ex.Message}",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            if (cmbPipeline.SelectedValue == null) return;
-            int pid = (int)cmbPipeline.SelectedValue;
-            using (var form = new InspectionEditForm(pid, false))
+            try
             {
-                if (form.ShowDialog() == DialogResult.OK)
-                    LoadInspections();
+                if (cmbPipeline.SelectedValue == null)
+                {
+                    MessageBox.Show("Сначала выберите трубопровод.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                int pid = (int)cmbPipeline.SelectedValue;
+                using (var form = new InspectionEditForm(pid, false))
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                        LoadInspections();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Не удалось открыть форму добавления инспекции.\n\n" +
+                    $"Техническая ошибка: {ex.Message}",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (dataGridView.CurrentRow == null) return;
-            int id = (int)dataGridView.CurrentRow.Cells["id"].Value;
-            using (var form = new InspectionEditForm(id, true))
+            try
             {
-                if (form.ShowDialog() == DialogResult.OK)
-                    LoadInspections();
+                if (dataGridView.CurrentRow == null)
+                {
+                    MessageBox.Show("Выберите инспекцию для редактирования.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                int id = (int)dataGridView.CurrentRow.Cells["id"].Value;
+                using (var form = new InspectionEditForm(id, true))
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                        LoadInspections();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Не удалось открыть форму редактирования инспекции.\n\n" +
+                    $"Техническая ошибка: {ex.Message}",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (dataGridView.CurrentRow == null) return;
-            if (MessageBox.Show("Удалить инспекцию? Все дефекты будут удалены.", "Подтверждение", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            try
             {
-                int id = (int)dataGridView.CurrentRow.Cells["id"].Value;
-                DatabaseHelper.ExecuteNonQuery("DELETE FROM inspections WHERE id=@id", new MySqlParameter("@id", id));
-                LoadInspections();
+                if (dataGridView.CurrentRow == null)
+                {
+                    MessageBox.Show("Выберите инспекцию для удаления.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (MessageBox.Show("Удалить инспекцию? Все дефекты будут удалены.", "Подтверждение", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    int id = (int)dataGridView.CurrentRow.Cells["id"].Value;
+                    DatabaseHelper.ExecuteNonQuery("DELETE FROM inspections WHERE id=@id", new MySqlParameter("@id", id));
+                    LoadInspections();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Не удалось удалить инспекцию.\n\n" +
+                    "Возможно, существуют связанные дефекты или проблемы с базой данных.\n\n" +
+                    $"Техническая ошибка: {ex.Message}",
+                    "Ошибка удаления",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            using (var form = new ImportInspectionsForm())
+            try
             {
-                if (form.ShowDialog() == DialogResult.OK)
-                    LoadInspections();
+                using (var form = new ImportInspectionsForm())
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                        LoadInspections();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Не удалось открыть форму импорта инспекций.\n\n" +
+                    $"Техническая ошибка: {ex.Message}",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
     }
