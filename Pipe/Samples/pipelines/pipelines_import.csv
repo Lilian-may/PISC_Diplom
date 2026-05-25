@@ -1,0 +1,4 @@
+name,start_km,end_km,diameter_mm,wall_thickness_mm,steel_grade,yield_strength_mpa,design_pressure_mpa,operating_pressure_mpa,region,commissioning_date
+Газопровод Уренгой-Новополоцк,0,150.5,1420,16.5,К60,420,7.5,7.2,Тюменская область,1985-01-01
+Газопровод Ямбург-Елец,0,200.0,1220,14.0,К56,380,6.3,6.0,ЯНАО,1988-06-15
+Газопровод Бованенково-Ухта,0,180.2,1420,18.0,К65,450,8.2,8.0,ЯНАО,2012-10-20
