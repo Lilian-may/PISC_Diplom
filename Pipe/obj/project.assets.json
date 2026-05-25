@@ -1695,11 +1695,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\artur\\source\\repos\\Pipe\\Pipe\\Pipe.csproj",
+      "projectUniqueName": "C:\\Desktop\\repositories\\PISC_Diplom\\Pipe\\Pipe.csproj",
       "projectName": "Pipe",
-      "projectPath": "C:\\Users\\artur\\source\\repos\\Pipe\\Pipe\\Pipe.csproj",
+      "projectPath": "C:\\Desktop\\repositories\\PISC_Diplom\\Pipe\\Pipe.csproj",
       "packagesPath": "C:\\Users\\artur\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\artur\\source\\repos\\Pipe\\Pipe\\obj\\",
+      "outputPath": "C:\\Desktop\\repositories\\PISC_Diplom\\Pipe\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
