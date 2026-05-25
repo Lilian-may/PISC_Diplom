@@ -1,8 +1,7 @@
 #nullable disable
-using OfficeOpenXml;
 using System;
-using System.ComponentModel;
 using System.Windows.Forms;
+using OfficeOpenXml;
 
 namespace Pipe
 {
@@ -13,14 +12,26 @@ namespace Pipe
         [STAThread]
         static void Main()
         {
-            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            using (var login = new LoginForm())
+            try
             {
-                if (login.ShowDialog() == DialogResult.OK)
-                    Application.Run(new MainForm());
+                ExcelPackage.License = LicenseContext.NonCommercial;
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                using (var login = new LoginForm())
+                {
+                    if (login.ShowDialog() == DialogResult.OK)
+                        Application.Run(new MainForm());
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Критическая ошибка при запуске приложения.\n\n" +
+                    "Проверьте установку необходимых компонентов и подключение к базе данных.\n\n" +
+                    $"Техническая ошибка: {ex.Message}",
+                    "Ошибка запуска",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
     }

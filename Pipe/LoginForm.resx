@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+<<<<<<< HEAD
   <!--
     Microsoft ResX Schema
 
@@ -105,6 +106,8 @@
       </xsd:complexType>
     </xsd:element>
   </xsd:schema>
+=======
+>>>>>>> 7e685c9ad11b09edbe5fbbaa8cf9c966d29b3e71
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>

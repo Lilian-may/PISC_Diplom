@@ -66,6 +66,7 @@ C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.csproj.Ge
 C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.dll
 C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\refint\Pipe.dll
 C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.pdb
+<<<<<<< HEAD
 C:\Desktop\repositories\PISC_Diplom\Pipe\bin\Debug\net8.0-windows\Pipe.exe
 C:\Desktop\repositories\PISC_Diplom\Pipe\bin\Debug\net8.0-windows\Pipe.deps.json
 C:\Desktop\repositories\PISC_Diplom\Pipe\bin\Debug\net8.0-windows\Pipe.runtimeconfig.json
@@ -125,3 +126,5 @@ C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.sourcelin
 C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.csproj.Up2Date
 C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.genruntimeconfig.cache
 C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\ref\Pipe.dll
+=======
+>>>>>>> 7e685c9ad11b09edbe5fbbaa8cf9c966d29b3e71
