@@ -1,9 +1,8 @@
 ﻿#nullable disable
-using MySql.Data.MySqlClient;
-using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Data;
 using System.Windows.Forms;
+using MySql.Data.MySqlClient;
 
 namespace Pipe
 {
@@ -11,8 +10,16 @@ namespace Pipe
     {
         public ReportForm()
         {
-            InitializeComponent();
-            LoadPipelines();
+            try
+            {
+                InitializeComponent();
+                CenterToParent(); // Центрируем форму относительно родителя
+                LoadPipelines();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка инициализации формы отчётов", ex);
+            }
         }
 
         private void LoadPipelines()
@@ -23,6 +30,7 @@ namespace Pipe
                 cmbPipeline.DataSource = dt;
                 cmbPipeline.DisplayMember = "name";
                 cmbPipeline.ValueMember = "id";
+                cmbPipeline.SelectedIndex = -1;
 
                 if (dt.Rows.Count == 0)
                 {
@@ -30,26 +38,55 @@ namespace Pipe
                     cmbInspection.Enabled = false;
                     btnGeneratePdf.Enabled = false;
                     btnExportExcel.Enabled = false;
+                    lblStatus.Text = "Нет трубопроводов в базе данных";
+                }
+                else
+                {
+                    lblStatus.Text = "Выберите трубопровод";
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки трубопроводов: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError("Не удалось загрузить список трубопроводов", ex);
             }
         }
 
         private void cmbPipeline_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbPipeline.SelectedItem == null) return;
+            try
+            {
+                // Очищаем список инспекций
+                cmbInspection.DataSource = null;
+                cmbInspection.Items.Clear();
+                cmbInspection.Text = "";
+                cmbInspection.Enabled = false;
+                btnGeneratePdf.Enabled = false;
+                btnExportExcel.Enabled = false;
 
-            DataRowView selectedRow = cmbPipeline.SelectedItem as DataRowView;
-            if (selectedRow == null) return;
+                if (cmbPipeline.SelectedItem == null)
+                {
+                    lblStatus.Text = "Выберите трубопровод";
+                    return;
+                }
 
-            int pid = Convert.ToInt32(selectedRow["id"]);
-            LoadInspections(pid);
+                DataRowView selectedRow = cmbPipeline.SelectedItem as DataRowView;
+                if (selectedRow == null)
+                {
+                    lblStatus.Text = "Ошибка загрузки данных";
+                    return;
+                }
+
+                int pid = Convert.ToInt32(selectedRow["id"]);
+                string pipelineName = selectedRow["name"].ToString();
+                LoadInspections(pid, pipelineName);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка при выборе трубопровода", ex);
+            }
         }
 
-        private void LoadInspections(int pipelineId)
+        private void LoadInspections(int pipelineId, string pipelineName)
         {
             try
             {
@@ -57,29 +94,57 @@ namespace Pipe
                     "SELECT id, inspection_date, tool_type FROM inspections WHERE pipeline_id=@pid ORDER BY inspection_date DESC",
                     new MySqlParameter("@pid", pipelineId));
 
-                cmbInspection.DataSource = dt;
-                cmbInspection.DisplayMember = "inspection_date";
-                cmbInspection.ValueMember = "id";
-
-                if (dt.Rows.Count == 0)
+                if (dt.Rows.Count > 0)
                 {
-                    cmbInspection.Enabled = false;
-                    btnGeneratePdf.Enabled = false;
-                    btnExportExcel.Enabled = false;
-                    lblStatus.Text = "Нет инспекций для выбранного трубопровода";
+                    cmbInspection.DataSource = dt;
+                    cmbInspection.DisplayMember = "inspection_date";
+                    cmbInspection.ValueMember = "id";
+                    cmbInspection.Enabled = true;
+                    lblStatus.Text = $"Трубопровод: {pipelineName} | Найдено инспекций: {dt.Rows.Count}";
                 }
                 else
                 {
-                    cmbInspection.Enabled = true;
-                    btnGeneratePdf.Enabled = true;
-                    btnExportExcel.Enabled = true;
-                    lblStatus.Text = $"Найдено инспекций: {dt.Rows.Count}";
+                    cmbInspection.Enabled = false;
+                    lblStatus.Text = $"Трубопровод: {pipelineName} | Нет инспекций";
+                    btnGeneratePdf.Enabled = false;
+                    btnExportExcel.Enabled = false;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки инспекций: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                cmbInspection.Enabled = false;
+                ShowError("Не удалось загрузить список инспекций", ex);
+            }
+        }
+
+        private void cmbInspection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (cmbInspection.SelectedItem == null)
+                {
+                    btnGeneratePdf.Enabled = false;
+                    btnExportExcel.Enabled = false;
+                    return;
+                }
+
+                DataRowView selectedRow = cmbInspection.SelectedItem as DataRowView;
+                if (selectedRow == null)
+                {
+                    btnGeneratePdf.Enabled = false;
+                    btnExportExcel.Enabled = false;
+                    return;
+                }
+
+                int inspId = Convert.ToInt32(selectedRow["id"]);
+                string inspDate = selectedRow["inspection_date"].ToString();
+
+                btnGeneratePdf.Enabled = true;
+                btnExportExcel.Enabled = true;
+                lblStatus.Text = $"Выбрана инспекция от {inspDate}";
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка при выборе инспекции", ex);
             }
         }
 
@@ -87,7 +152,7 @@ namespace Pipe
         {
             if (cmbPipeline.SelectedItem == null || cmbInspection.SelectedItem == null)
             {
-                MessageBox.Show("Выберите трубопровод и инспекцию", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Сначала выберите трубопровод и инспекцию", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -101,9 +166,17 @@ namespace Pipe
                 if (inspRow == null) return;
                 int inspId = Convert.ToInt32(inspRow["id"]);
 
+                // Загружаем критические дефекты
                 DataTable defects = DatabaseHelper.ExecuteQuery(
                     "SELECT * FROM defects WHERE inspection_id=@id AND severity IN ('High','Critical') ORDER BY erf DESC",
                     new MySqlParameter("@id", inspId));
+
+                if (defects.Rows.Count == 0)
+                {
+                    MessageBox.Show("Нет критических дефектов (High/Critical) для выбранной инспекции",
+                        "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
 
                 DataTable pipeData = DatabaseHelper.ExecuteQuery("SELECT * FROM pipelines WHERE id=@id", new MySqlParameter("@id", pipeId));
                 DataTable inspData = DatabaseHelper.ExecuteQuery("SELECT * FROM inspections WHERE id=@id", new MySqlParameter("@id", inspId));
@@ -111,13 +184,6 @@ namespace Pipe
                 if (pipeData.Rows.Count == 0 || inspData.Rows.Count == 0)
                 {
                     MessageBox.Show("Данные не найдены", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                if (defects.Rows.Count == 0)
-                {
-                    MessageBox.Show("Нет критических дефектов (High/Critical) для выбранной инспекции",
-                        "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -142,11 +208,12 @@ namespace Pipe
                 {
                     ReportGenerator.GenerateCriticalDefectsPdf(defects, p, i, sfd.FileName);
                     MessageBox.Show($"PDF-отчёт сохранён:\n{sfd.FileName}", "Готово", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    AuditLogger.Log(Program.CurrentUser, "Экспорт PDF отчёта", details: $"Трубопровод: {p.Name}, Инспекция: {i.Date:dd.MM.yyyy}");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при генерации PDF: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError("Ошибка при генерации PDF-отчёта", ex);
             }
         }
 
@@ -154,7 +221,7 @@ namespace Pipe
         {
             if (cmbPipeline.SelectedItem == null || cmbInspection.SelectedItem == null)
             {
-                MessageBox.Show("Выберите трубопровод и инспекцию", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Сначала выберите трубопровод и инспекцию", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -182,12 +249,44 @@ namespace Pipe
                 {
                     ReportGenerator.ExportToExcel(defects, sfd.FileName);
                     MessageBox.Show($"Excel-файл сохранён:\n{sfd.FileName}", "Готово", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    AuditLogger.Log(Program.CurrentUser, "Экспорт Excel отчёта");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при экспорте в Excel: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError("Ошибка при экспорте в Excel", ex);
             }
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LoadPipelines();
+                cmbPipeline.SelectedIndex = -1;
+                cmbInspection.DataSource = null;
+                cmbInspection.Enabled = false;
+                btnGeneratePdf.Enabled = false;
+                btnExportExcel.Enabled = false;
+                lblStatus.Text = "Список обновлён. Выберите трубопровод";
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка при обновлении", ex);
+            }
+        }
+
+        private void ShowError(string message, Exception ex)
+        {
+            string errorMsg = $"{message}\n\n" +
+                              $"Инструкция:\n" +
+                              $"1. Проверьте подключение к базе данных\n" +
+                              $"2. Убедитесь, что в таблицах pipelines и inspections есть данные\n" +
+                              $"3. Попробуйте нажать 'Обновить список'\n\n" +
+                              $"Техническая ошибка:\n{ex.Message}\n\n" +
+                              $"Стек вызовов:\n{ex.StackTrace}";
+            MessageBox.Show(errorMsg, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            AuditLogger.LogError(Program.CurrentUser, message, ex);
         }
     }
 }

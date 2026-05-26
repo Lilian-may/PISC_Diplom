@@ -95,12 +95,13 @@ namespace Pipe
                                 System.Diagnostics.Debug.WriteLine($"Ошибка: {ex.Message}");
                             }
                         }
+
                         MessageBox.Show($"Импорт трубопроводов завершён.\nДобавлено/обновлено: {imported}\nОшибок: {errors}", "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         RefreshData();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Ошибка при импорте: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ErrorHelper.ShowErrorWithDetails($"Ошибка при импорте данных трубопроводов.\n\nПроверьте файл и повторите попытку.", "Ошибка", ex);
                     }
                 }
             }
@@ -162,7 +163,7 @@ namespace Pipe
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Ошибка при импорте: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ErrorHelper.ShowErrorWithDetails($"Ошибка при импорте инспекций.\n\nПроверьте файл и повторите попытку.", "Ошибка", ex);
                     }
                 }
             }
