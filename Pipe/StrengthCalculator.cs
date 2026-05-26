@@ -23,13 +23,14 @@ namespace Pipe
                 if (t <= 0 || D <= 0 || sigma_t <= 0 || P_des <= 0)
                     throw new InvalidOperationException("Некорректные параметры трубопровода (толщина, диаметр, прочность или давление)");
 
+                // Формула СТО Газпром 2-2.3-112-2007 для одиночного коррозионного дефекта
                 double term1 = (2.0 * sigma_t * (t - d)) / D;
                 double term2 = (1 - L / (Math.PI * D));
                 double term3 = (1 - (L / (Math.PI * D)) * (1 - d / t));
                 double P_allow = term1 * term2 / term3;
                 if (P_allow < 0) P_allow = 0;
 
-                double erf = P_des / P_allow;
+                double erf = P_allow > 0 ? P_des / P_allow : 999;
 
                 string severity;
                 if (erf <= 0.7 && depthPercent < 10)
@@ -45,15 +46,28 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Ошибка при расчёте остаточной прочности дефекта.\n\n" +
-                    "Проверьте параметры трубопровода (диаметр, толщина, предел текучести, давление).\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
-                    "Ошибка расчёта",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                string errorMsg = $"Ошибка при расчёте остаточной прочности дефекта.\n\n" +
+                                  $"Инструкция:\n" +
+                                  $"Проверьте параметры трубопровода:\n" +
+                                  $"• Диаметр (D) должен быть > 0\n" +
+                                  $"• Толщина стенки (t) должна быть > 0\n" +
+                                  $"• Предел текучести должен быть > 0\n" +
+                                  $"• Проектное давление должно быть > 0\n\n" +
+                                  $"Техническая ошибка:\n{ex.Message}\n\n" +
+                                  $"Стек вызовов:\n{ex.StackTrace}";
+
+                MessageBox.Show(errorMsg, "Ошибка расчёта", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AuditLogger.LogError(Program.CurrentUser ?? "system", "StrengthCalculator.Calculate", ex, $"depthPercent={depthPercent}, lengthMm={lengthMm}");
                 return (0, 999, "Critical");
             }
+        }
+
+        /// <summary>
+        /// Проверка периодичности инспекций (не реже 1 раза в 3 года)
+        /// </summary>
+        public static bool CheckInspectionPeriodicity(DateTime lastInspectionDate)
+        {
+            return (DateTime.Now - lastInspectionDate).TotalDays <= 365 * 3;
         }
     }
 }

@@ -16,12 +16,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Ошибка при загрузке формы управления инспекциями.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Ошибка при загрузке формы управления инспекциями.\n\nПроверьте подключение и повторите попытку.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -36,13 +34,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось загрузить список трубопроводов.\n\n" +
-                    "Проверьте подключение к базе данных.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось загрузить список трубопроводов.\n\nПроверьте подключение к базе данных и повторите попытку.",
                     "Ошибка загрузки",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -63,13 +58,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось загрузить список инспекций.\n\n" +
-                    "Проверьте подключение к базе данных.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось загрузить список инспекций.\n\nПроверьте подключение к базе данных и повторите попытку.",
                     "Ошибка загрузки",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -81,11 +73,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка при смене трубопровода: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Ошибка при смене трубопровода.\n\nПопробуйте снова. Если ошибка повторится, нажмите Отмена для подробностей.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -107,12 +98,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось открыть форму добавления инспекции.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось открыть форму добавления инспекции.\n\nПопробуйте повторить действие.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -134,12 +123,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось открыть форму редактирования инспекции.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось открыть форму редактирования инспекции.\n\nПопробуйте повторить действие.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -161,13 +148,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось удалить инспекцию.\n\n" +
-                    "Возможно, существуют связанные дефекты или проблемы с базой данных.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось удалить инспекцию.\n\nВозможно, существуют связанные дефекты или проблемы с базой данных.\n\nПовторите попытку позже.",
                     "Ошибка удаления",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -183,12 +167,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось открыть форму импорта инспекций.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось открыть форму импорта инспекций.\n\nПовторите попытку.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
     }

@@ -31,49 +31,69 @@
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
 
-                        this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            // menuStrip
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.fileMenu, this.referenceMenu, this.analysisMenu, this.reportsMenu, this.helpMenu});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(900, 24);
             this.menuStrip.TabIndex = 0;
 
-                        this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.exitToolStripMenuItem });
+            // fileMenu
+            this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.exitToolStripMenuItem });
             this.fileMenu.Text = "Файл";
-                        this.exitToolStripMenuItem.Text = "Выход";
+            // exitToolStripMenuItem
+            this.exitToolStripMenuItem.Text = "Выход";
             this.exitToolStripMenuItem.Click += this.exitToolStripMenuItem_Click;
 
-                        this.referenceMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            // referenceMenu
+            this.referenceMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.pipelinesToolStripMenuItem, this.inspectionsToolStripMenuItem });
             this.referenceMenu.Text = "Справочники";
-                        this.pipelinesToolStripMenuItem.Text = "Трубопроводы";
+            // pipelinesToolStripMenuItem
+            this.pipelinesToolStripMenuItem.Text = "Трубопроводы";
             this.pipelinesToolStripMenuItem.Click += this.pipelinesToolStripMenuItem_Click;
-                        this.inspectionsToolStripMenuItem.Text = "Инспекции";
+            // inspectionsToolStripMenuItem
+            this.inspectionsToolStripMenuItem.Text = "Инспекции";
             this.inspectionsToolStripMenuItem.Click += this.inspectionsToolStripMenuItem_Click;
 
-                        this.analysisMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.defectsToolStripMenuItem });
+            // analysisMenu
+            this.analysisMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.defectsToolStripMenuItem });
             this.analysisMenu.Text = "Анализ";
-                        this.defectsToolStripMenuItem.Text = "Дефекты";
+            // defectsToolStripMenuItem
+            this.defectsToolStripMenuItem.Text = "Дефекты";
             this.defectsToolStripMenuItem.Click += this.defectsToolStripMenuItem_Click;
 
-                        this.reportsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.reportsToolStripMenuItem });
+            // reportsMenu
+            this.reportsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.reportsToolStripMenuItem });
             this.reportsMenu.Text = "Отчёты";
-                        this.reportsToolStripMenuItem.Text = "Генерация отчётов";
+            // reportsToolStripMenuItem
+            this.reportsToolStripMenuItem.Text = "Генерация отчётов";
             this.reportsToolStripMenuItem.Click += this.reportsToolStripMenuItem_Click;
 
-                        this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.aboutToolStripMenuItem });
+            // helpMenu
+            this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.aboutToolStripMenuItem });
             this.helpMenu.Text = "Справка";
-                        this.aboutToolStripMenuItem.Text = "О программе";
+            // aboutToolStripMenuItem
+            this.aboutToolStripMenuItem.Text = "О программе";
             this.aboutToolStripMenuItem.Click += this.aboutToolStripMenuItem_Click;
 
-                        this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.lblUser, this.lblDbStatus });
+            // statusStrip
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.lblUser, this.lblDbStatus });
             this.statusStrip.Location = new System.Drawing.Point(0, 528);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(900, 22);
-                        this.lblUser.Text = "Пользователь:";
-                        this.lblDbStatus.Text = "Подключение:";
+            // lblUser
+            this.lblUser.Name = "lblUser";
+            this.lblUser.Size = new System.Drawing.Size(100, 17);
+            this.lblUser.Text = "Пользователь:";
+            // lblDbStatus
+            this.lblDbStatus.Name = "lblDbStatus";
+            this.lblDbStatus.Size = new System.Drawing.Size(120, 17);
+            this.lblDbStatus.Text = "Подключение к БД:";
 
-                        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            // MainForm
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(900, 550);
             this.Controls.Add(this.statusStrip);

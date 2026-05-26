@@ -19,11 +19,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка инициализации формы импорта: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Ошибка инициализации формы импорта.\n\nПроверьте установку и повторите попытку.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -43,11 +42,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка выбора файла: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Ошибка выбора файла.\n\nПроверьте путь к файлу и его доступность.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -104,13 +102,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось импортировать файл.\n\n" +
-                    "Проверьте формат файла и структуру данных.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось импортировать файл.\n\nПроверьте формат файла и структуру данных.",
                     "Ошибка импорта",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
                 lblStatus.Text = "Ошибка импорта";
             }
         }
@@ -161,11 +156,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка чтения файла: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Ошибка чтения файла.\n\nПроверьте формат и содержимое файла.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
             return dt;
         }

@@ -17,11 +17,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка инициализации формы отчётов: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Ошибка инициализации формы отчётов.\n\nПроверьте настройки и повторите попытку.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -43,13 +42,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось загрузить список трубопроводов.\n\n" +
-                    "Проверьте подключение к базе данных.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось загрузить список трубопроводов.\n\nПроверьте подключение к базе данных и повторите попытку.",
                     "Ошибка загрузки",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -65,11 +61,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка при выборе трубопровода: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Ошибка при выборе трубопровода.\n\nПопробуйте выбрать снова.",
                     "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -100,13 +95,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось загрузить список инспекций.\n\n" +
-                    "Проверьте подключение к базе данных.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось загрузить список инспекций.\n\nПроверьте подключение к базе данных и повторите попытку.",
                     "Ошибка загрузки",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
                 cmbInspection.Enabled = false;
             }
         }
@@ -164,13 +156,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось сформировать PDF-отчёт.\n\n" +
-                    "Проверьте, что выбраны трубопровод и инспекция, и есть критические дефекты.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось сформировать PDF-отчёт.\n\nПроверьте, что выбраны трубопровод и инспекция, и есть критические дефекты.",
                     "Ошибка генерации PDF",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
 
@@ -205,13 +194,10 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Не удалось экспортировать данные в Excel.\n\n" +
-                    "Проверьте, что выбраны трубопровод и инспекция.\n\n" +
-                    $"Техническая ошибка: {ex.Message}",
+                ErrorHelper.ShowErrorWithDetails(
+                    "Не удалось экспортировать данные в Excel.\n\nПроверьте, что выбраны трубопровод и инспекция.",
                     "Ошибка экспорта в Excel",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex);
             }
         }
     }
