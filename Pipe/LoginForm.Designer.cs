@@ -12,8 +12,11 @@
 
         private void InitializeComponent()
         {
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.panelHeader = new System.Windows.Forms.Panel();
+            this.headerPanel = new System.Windows.Forms.Panel();
+            this.titleLabel = new System.Windows.Forms.Label();
+            this.subtitleLabel = new System.Windows.Forms.Label();
+
+            this.contentPanel = new System.Windows.Forms.Panel();
             this.lblLogin = new System.Windows.Forms.Label();
             this.txtLogin = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
@@ -21,97 +24,146 @@
             this.btnLogin = new System.Windows.Forms.Button();
             this.btnCreateFirstUser = new System.Windows.Forms.Button();
             this.lblInfo = new System.Windows.Forms.Label();
-            this.panelFooter = new System.Windows.Forms.Panel();
-            this.panelHeader.SuspendLayout();
+
+            this.footerPanel = new System.Windows.Forms.Panel();
+            this.lblVersion = new System.Windows.Forms.Label();
+
+            this.headerPanel.SuspendLayout();
+            this.contentPanel.SuspendLayout();
+            this.footerPanel.SuspendLayout();
             this.SuspendLayout();
 
-            this.lblTitle.AutoSize = false;
-            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Location = new System.Drawing.Point(0, 0);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(400, 60);
-            this.lblTitle.Text = "ВТД Аналитика ПАО «Газпром»";
-            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // ========== HEADER PANEL ==========
+            this.headerPanel.BackColor = System.Drawing.Color.FromArgb(0, 70, 128);
+            this.headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.headerPanel.Height = 100;
+            this.headerPanel.Padding = new System.Windows.Forms.Padding(30, 20, 30, 20);
 
-            this.panelHeader.BackColor = System.Drawing.Color.DarkBlue;
-            this.panelHeader.Controls.Add(this.lblTitle);
-            this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelHeader.Location = new System.Drawing.Point(0, 0);
-            this.panelHeader.Name = "panelHeader";
-            this.panelHeader.Size = new System.Drawing.Size(400, 60);
+            this.titleLabel.AutoSize = true;
+            this.titleLabel.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.titleLabel.ForeColor = System.Drawing.Color.White;
+            this.titleLabel.Location = new System.Drawing.Point(30, 25);
+            this.titleLabel.Text = "ВТД Аналитика";
 
+            this.subtitleLabel.AutoSize = true;
+            this.subtitleLabel.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.subtitleLabel.ForeColor = System.Drawing.Color.FromArgb(200, 200, 200);
+            this.subtitleLabel.Location = new System.Drawing.Point(32, 58);
+            this.subtitleLabel.Text = "Система анализа данных внутритрубной диагностики";
+
+            this.headerPanel.Controls.Add(this.titleLabel);
+            this.headerPanel.Controls.Add(this.subtitleLabel);
+
+            // ========== CONTENT PANEL ==========
+            this.contentPanel.BackColor = System.Drawing.Color.White;
+            this.contentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.contentPanel.Padding = new System.Windows.Forms.Padding(40, 30, 40, 30);
+
+            // Логин
             this.lblLogin.AutoSize = true;
-            this.lblLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.lblLogin.Location = new System.Drawing.Point(40, 90);
-            this.lblLogin.Text = "Логин:";
+            this.lblLogin.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.lblLogin.ForeColor = System.Drawing.Color.FromArgb(64, 64, 64);
+            this.lblLogin.Location = new System.Drawing.Point(40, 35);
+            this.lblLogin.Text = "Логин";
 
-            this.txtLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.txtLogin.Location = new System.Drawing.Point(120, 87);
-            this.txtLogin.Size = new System.Drawing.Size(220, 23);
+            this.txtLogin.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.txtLogin.Location = new System.Drawing.Point(40, 60);
+            this.txtLogin.Size = new System.Drawing.Size(320, 27);
+            this.txtLogin.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
+            // Пароль
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.lblPassword.Location = new System.Drawing.Point(40, 130);
-            this.lblPassword.Text = "Пароль:";
+            this.lblPassword.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.lblPassword.ForeColor = System.Drawing.Color.FromArgb(64, 64, 64);
+            this.lblPassword.Location = new System.Drawing.Point(40, 105);
+            this.lblPassword.Text = "Пароль";
 
-            this.txtPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.txtPassword.Location = new System.Drawing.Point(120, 127);
+            this.txtPassword.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.txtPassword.Location = new System.Drawing.Point(40, 130);
+            this.txtPassword.Size = new System.Drawing.Size(320, 27);
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(220, 23);
+            this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtPassword.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPassword_KeyPress);
 
-            this.btnLogin.BackColor = System.Drawing.Color.SteelBlue;
+            // Кнопка входа
             this.btnLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnLogin.BackColor = System.Drawing.Color.FromArgb(0, 120, 215);
             this.btnLogin.ForeColor = System.Drawing.Color.White;
-            this.btnLogin.Location = new System.Drawing.Point(60, 180);
-            this.btnLogin.Size = new System.Drawing.Size(120, 35);
+            this.btnLogin.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnLogin.Text = "Войти";
+            this.btnLogin.Size = new System.Drawing.Size(150, 45);
+            this.btnLogin.FlatAppearance.BorderSize = 0;
+            this.btnLogin.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLogin.Location = new System.Drawing.Point(40, 180);
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
 
-            this.btnCreateFirstUser.BackColor = System.Drawing.Color.DarkGreen;
+            // Кнопка создания первого пользователя
             this.btnCreateFirstUser.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCreateFirstUser.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.btnCreateFirstUser.ForeColor = System.Drawing.Color.White;
-            this.btnCreateFirstUser.Location = new System.Drawing.Point(200, 180);
-            this.btnCreateFirstUser.Size = new System.Drawing.Size(150, 35);
+            this.btnCreateFirstUser.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(200, 200, 200);
+            this.btnCreateFirstUser.BackColor = System.Drawing.Color.FromArgb(248, 249, 250);
+            this.btnCreateFirstUser.ForeColor = System.Drawing.Color.FromArgb(64, 64, 64);
+            this.btnCreateFirstUser.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.btnCreateFirstUser.Text = "Создать первого пользователя";
+            this.btnCreateFirstUser.Size = new System.Drawing.Size(210, 45);
+            this.btnCreateFirstUser.FlatAppearance.BorderSize = 1;
+            this.btnCreateFirstUser.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCreateFirstUser.Location = new System.Drawing.Point(210, 180);
             this.btnCreateFirstUser.Visible = false;
             this.btnCreateFirstUser.Click += new System.EventHandler(this.btnCreateFirstUser_Click);
 
+            // Информационная метка
             this.lblInfo.AutoSize = true;
-            this.lblInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Italic);
-            this.lblInfo.Location = new System.Drawing.Point(40, 230);
-            this.lblInfo.Text = "Введите логин и пароль для входа.";
+            this.lblInfo.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblInfo.ForeColor = System.Drawing.Color.FromArgb(128, 128, 128);
+            this.lblInfo.Location = new System.Drawing.Point(40, 245);
+            this.lblInfo.Text = "Введите логин и пароль для входа";
 
-            this.panelFooter.BackColor = System.Drawing.Color.LightGray;
-            this.panelFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelFooter.Location = new System.Drawing.Point(0, 270);
-            this.panelFooter.Size = new System.Drawing.Size(400, 30);
+            this.contentPanel.Controls.Add(this.lblLogin);
+            this.contentPanel.Controls.Add(this.txtLogin);
+            this.contentPanel.Controls.Add(this.lblPassword);
+            this.contentPanel.Controls.Add(this.txtPassword);
+            this.contentPanel.Controls.Add(this.btnLogin);
+            this.contentPanel.Controls.Add(this.btnCreateFirstUser);
+            this.contentPanel.Controls.Add(this.lblInfo);
 
-            this.ClientSize = new System.Drawing.Size(400, 300);
-            this.Controls.Add(this.lblInfo);
-            this.Controls.Add(this.btnCreateFirstUser);
-            this.Controls.Add(this.btnLogin);
-            this.Controls.Add(this.txtPassword);
-            this.Controls.Add(this.lblPassword);
-            this.Controls.Add(this.txtLogin);
-            this.Controls.Add(this.lblLogin);
-            this.Controls.Add(this.panelHeader);
-            this.Controls.Add(this.panelFooter);
+            // ========== FOOTER PANEL ==========
+            this.footerPanel.BackColor = System.Drawing.Color.FromArgb(240, 242, 245);
+            this.footerPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.footerPanel.Height = 35;
+            this.footerPanel.Padding = new System.Windows.Forms.Padding(30, 8, 30, 8);
+
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.lblVersion.ForeColor = System.Drawing.Color.FromArgb(128, 128, 128);
+            this.lblVersion.Location = new System.Drawing.Point(30, 10);
+            this.lblVersion.Text = "ПАО «Газпром» | Версия 2.0 | Соответствует СТО Газпром 2-2.3-112-2007";
+
+            this.footerPanel.Controls.Add(this.lblVersion);
+
+            // ========== MAIN FORM ==========
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(420, 380);
+            this.Controls.Add(this.contentPanel);
+            this.Controls.Add(this.headerPanel);
+            this.Controls.Add(this.footerPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Text = "Авторизация - ВТД Аналитика";
+            this.BackColor = System.Drawing.Color.FromArgb(240, 242, 245);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Авторизация - ВТД Газпром";
-            this.panelHeader.ResumeLayout(false);
+
+            this.headerPanel.ResumeLayout(false);
+            this.contentPanel.ResumeLayout(false);
+            this.footerPanel.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
         }
 
-        private System.Windows.Forms.Label lblTitle;
-        private System.Windows.Forms.Panel panelHeader;
+        private System.Windows.Forms.Panel headerPanel;
+        private System.Windows.Forms.Label titleLabel;
+        private System.Windows.Forms.Label subtitleLabel;
+        private System.Windows.Forms.Panel contentPanel;
         private System.Windows.Forms.Label lblLogin;
         private System.Windows.Forms.TextBox txtLogin;
         private System.Windows.Forms.Label lblPassword;
@@ -119,6 +171,7 @@
         private System.Windows.Forms.Button btnLogin;
         private System.Windows.Forms.Button btnCreateFirstUser;
         private System.Windows.Forms.Label lblInfo;
-        private System.Windows.Forms.Panel panelFooter;
+        private System.Windows.Forms.Panel footerPanel;
+        private System.Windows.Forms.Label lblVersion;
     }
 }

@@ -21,7 +21,7 @@ namespace Pipe
                 DatabaseHelper.Initialize();
 
                 // Настройка EPPlus
-                ExcelPackage.License = LicenseContext.NonCommercial;
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);

@@ -142,7 +142,7 @@ namespace Pipe
                 }
 
                 string hash = SecurityHelper.HashPassword(password);
-                string sql = "INSERT INTO users (login, password_hash, role) VALUES (@login, @hash, 'Admin')";
+                string sql = "INSERT INTO users (login, password_hash) VALUES (@login, @hash)";
                 DatabaseHelper.ExecuteNonQuery(sql,
                     new MySqlParameter("@login", login),
                     new MySqlParameter("@hash", hash));

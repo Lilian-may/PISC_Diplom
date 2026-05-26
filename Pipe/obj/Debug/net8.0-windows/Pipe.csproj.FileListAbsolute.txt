@@ -128,3 +128,4 @@ C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\Pipe.genruntim
 C:\Desktop\repositories\PISC_Diplom\Pipe\obj\Debug\net8.0-windows\ref\Pipe.dll
 =======
 >>>>>>> 7e685c9ad11b09edbe5fbbaa8cf9c966d29b3e71
+C:\Desktop\repositories\PISC_Diplom\Pipe\bin\Debug\net8.0-windows\BCrypt-Net-Next.dll

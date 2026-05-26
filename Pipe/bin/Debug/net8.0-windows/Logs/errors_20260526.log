@@ -1,0 +1,36 @@
+﻿[2026-05-26 18:30:41]
+  Пользователь: system
+  Действие: ExecuteScalar
+  Контекст: SELECT COUNT(*) FROM users
+  Ошибка: Unable to connect to any of the specified MySQL hosts
+  Стек:    at MySql.Data.MySqlClient.NativeDriver.<>c.<Open>b__43_0(Exception ex)
+   at System.AggregateException.Handle(Func`2 predicate)
+   at MySql.Data.MySqlClient.NativeDriver.Open(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.Driver.Open(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.Driver.Create(MySqlConnectionStringBuilder settings, CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlPool.CreateNewPooledConnection(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlPool.GetPooledConnection(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlPool.TryToGetDriver(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlPool.GetConnection(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlConnection.Open(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlConnection.Open()
+   at Pipe.DatabaseHelper.ExecuteScalar(String sql, MySqlParameter[] parameters) in C:\Desktop\repositories\PISC_Diplom\Pipe\DatabaseHelper.cs:line 120
+---
+[2026-05-26 18:38:54]
+  Пользователь: system
+  Действие: ExecuteScalar
+  Контекст: SELECT COUNT(*) FROM users
+  Ошибка: Unable to connect to any of the specified MySQL hosts
+  Стек:    at MySql.Data.MySqlClient.NativeDriver.<>c.<Open>b__43_0(Exception ex)
+   at System.AggregateException.Handle(Func`2 predicate)
+   at MySql.Data.MySqlClient.NativeDriver.Open(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.Driver.Open(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.Driver.Create(MySqlConnectionStringBuilder settings, CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlPool.CreateNewPooledConnection(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlPool.GetPooledConnection(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlPool.TryToGetDriver(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlPool.GetConnection(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlConnection.Open(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlConnection.Open()
+   at Pipe.DatabaseHelper.ExecuteScalar(String sql, MySqlParameter[] parameters) in C:\Desktop\repositories\PISC_Diplom\Pipe\DatabaseHelper.cs:line 120
+---

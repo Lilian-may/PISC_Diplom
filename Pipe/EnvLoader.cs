@@ -7,7 +7,22 @@ namespace Pipe
 {
     public static class EnvLoader
     {
-        private static string envFilePath = Path.Combine(Application.StartupPath, ".env");
+        private static string envFilePath = GetEnvFilePath();
+
+        private static string GetEnvFilePath()
+        {
+            // Получаем путь к корню решения (где находится .sln файл)
+            string startupPath = Application.StartupPath;
+            string solutionRoot = Path.GetDirectoryName(startupPath);
+
+            // Поднимаемся на один уровень выше папки Pipe
+            while (!string.IsNullOrEmpty(solutionRoot) && !File.Exists(Path.Combine(solutionRoot, ".gitignore")))
+            {
+                solutionRoot = Path.GetDirectoryName(solutionRoot);
+            }
+
+            return Path.Combine(solutionRoot ?? startupPath, ".env");
+        }
 
         public static void Load()
         {
@@ -35,7 +50,7 @@ namespace Pipe
             catch (Exception ex)
             {
                 ShowError("Ошибка загрузки конфигурационного файла .env",
-                    "Убедитесь, что файл .env существует в папке программы и имеет правильный формат.\n\n" +
+                    "Убедитесь, что файл .env существует в корне решения (рядом с .gitignore) и имеет правильный формат.\n\n" +
                     "Файл должен содержать строки вида: KEY=VALUE\n\n" +
                     "Обязательные параметры:\n" +
                     "DB_HOST=localhost\n" +
@@ -49,21 +64,22 @@ namespace Pipe
         private static void CreateDefaultEnvFile()
         {
             string defaultContent = @"# Конфигурация подключения к базе данных
-                DB_HOST=localhost
-                DB_PORT=3306
-                DB_NAME=test_db_name
-                DB_USER=root
-                DB_PASSWORD=examp_pass
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=test_db_name
+DB_USER=root
+DB_PASSWORD=examp_pass
 
-                # Настройки приложения
-                LOG_LEVEL=Info
-                AUDIT_LOG_ENABLED=true
-            ";
+# Настройки приложения
+LOG_LEVEL=Info
+AUDIT_LOG_ENABLED=true
+";
             File.WriteAllText(envFilePath, defaultContent);
             MessageBox.Show(
                 "Создан файл конфигурации .env\n\n" +
                 "Пожалуйста, отредактируйте его, указав правильные параметры подключения к базе данных.\n" +
-                "Файл находится в папке с программой.\n\n" +
+                "Файл находится в корне решения (рядом с .gitignore):\n" +
+                envFilePath + "\n\n" +
                 "После редактирования перезапустите приложение.",
                 "Первый запуск",
                 MessageBoxButtons.OK,

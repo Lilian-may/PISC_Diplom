@@ -2,7 +2,7 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
-using BCrypt;
+using BCrypt.Net;
 
 namespace Pipe
 {
@@ -12,8 +12,8 @@ namespace Pipe
         {
             try
             {
-                // BCrypt-Official API
-                return BCrypt.HashPassword(password, BCrypt.GenerateSalt(12));
+                // BCrypt.Net-Next API
+                return BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt(12));
             }
             catch (Exception ex)
             {
@@ -28,8 +28,8 @@ namespace Pipe
             {
                 if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(hash))
                     return false;
-                // BCrypt-Official API
-                return BCrypt.CheckPassword(password, hash);
+                // BCrypt.Net-Next API
+                return BCrypt.Net.BCrypt.Verify(password, hash);
             }
             catch (Exception ex)
             {

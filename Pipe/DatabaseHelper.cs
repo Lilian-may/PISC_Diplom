@@ -20,28 +20,38 @@ namespace Pipe
             {
                 string host = EnvLoader.Get("DB_HOST", "localhost");
                 string port = EnvLoader.Get("DB_PORT", "3306");
-                string database = EnvLoader.Get("DB_NAME", "ISPr25-24_KuzminAO_gazprom_vtd");
+                string database = EnvLoader.Get("DB_NAME", "test");
                 string user = EnvLoader.Get("DB_USER", "root");
-                string password = EnvLoader.Get("DB_PASSWORD", "");
+                string password = EnvLoader.Get("DB_PASSWORD", "your_safety_password");
 
                 connectionString = $"Server={host};Port={port};Database={database};Uid={user};Pwd={password};";
-                initialized = true;
 
                 // Проверка подключения
-                using (var conn = new MySqlConnection(connectionString))
-                {
-                    conn.Open();
-                }
+                TestConnection();
+
+                initialized = true;
             }
             catch (Exception ex)
             {
-                ShowError("Не удалось подключиться к базе данных",
-                    "Проверьте:\n" +
-                    "• Запущен ли сервер MySQL\n" +
-                    "• Правильность параметров в файле .env (DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD)\n" +
-                    "• Доступность сети и настройки брандмауэра",
-                    ex);
+                string errorMsg = $"Не удалось инициализировать подключение к базе данных.\n\n" +
+                                  $"Инструкция:\n" +
+                                  $"1. Проверьте файл .env в папке программы\n" +
+                                  $"2. Убедитесь, что параметры подключения корректны\n" +
+                                  $"3. Проверьте, что MySQL сервер запущен\n\n" +
+                                  $"Техническая ошибка:\n{ex.Message}\n\n" +
+                                  $"Стек вызовов:\n{ex.StackTrace}";
+                MessageBox.Show(errorMsg, "Ошибка базы данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AuditLogger.LogError("system", "DatabaseHelper.Initialize", ex);
                 throw;
+            }
+        }
+
+        private static void TestConnection()
+        {
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                conn.Close();
             }
         }
 
@@ -65,11 +75,16 @@ namespace Pipe
             }
             catch (Exception ex)
             {
+                string errorMsg = $"Не удалось выполнить запрос к базе данных.\n\n" +
+                                  $"Инструкция:\n" +
+                                  $"1. Проверьте подключение к интернету (сервер {EnvLoader.Get("DB_HOST", "cfif31.ru")})\n" +
+                                  $"2. Убедитесь, что сервер MySQL доступен\n" +
+                                  $"3. Проверьте правильность параметров в файле .env\n\n" +
+                                  $"Запрос: {Truncate(sql, 200)}\n\n" +
+                                  $"Техническая ошибка:\n{ex.Message}\n\n" +
+                                  $"Стек вызовов:\n{ex.StackTrace}";
+                MessageBox.Show(errorMsg, "Ошибка базы данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 AuditLogger.LogError(Program.CurrentUser ?? "system", "ExecuteQuery", ex, sql);
-                ShowError("Не удалось выполнить запрос к базе данных",
-                    "Проверьте подключение к серверу MySQL и правильность SQL-запроса.\n\n" +
-                    "Если ошибка повторяется, обратитесь к администратору.",
-                    ex);
                 return new DataTable();
             }
         }
@@ -92,11 +107,16 @@ namespace Pipe
             }
             catch (Exception ex)
             {
+                string errorMsg = $"Не удалось выполнить изменение данных в базе.\n\n" +
+                                  $"Инструкция:\n" +
+                                  $"1. Проверьте, что все поля заполнены корректно\n" +
+                                  $"2. Убедитесь, что данные не дублируются\n" +
+                                  $"3. Проверьте подключение к серверу\n\n" +
+                                  $"Запрос: {Truncate(sql, 200)}\n\n" +
+                                  $"Техническая ошибка:\n{ex.Message}\n\n" +
+                                  $"Стек вызовов:\n{ex.StackTrace}";
+                MessageBox.Show(errorMsg, "Ошибка базы данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 AuditLogger.LogError(Program.CurrentUser ?? "system", "ExecuteNonQuery", ex, sql);
-                ShowError("Не удалось выполнить изменение данных в базе",
-                    "Проверьте, что все поля заполнены корректно, и данные не дублируются.\n\n" +
-                    "Убедитесь, что у вас есть права на запись.",
-                    ex);
                 return -1;
             }
         }
@@ -117,10 +137,15 @@ namespace Pipe
             }
             catch (Exception ex)
             {
+                string errorMsg = $"Не удалось получить данные из базы.\n\n" +
+                                  $"Инструкция:\n" +
+                                  $"1. Проверьте подключение к серверу\n" +
+                                  $"2. Убедитесь, что запрос составлен правильно\n\n" +
+                                  $"Запрос: {Truncate(sql, 200)}\n\n" +
+                                  $"Техническая ошибка:\n{ex.Message}\n\n" +
+                                  $"Стек вызовов:\n{ex.StackTrace}";
+                MessageBox.Show(errorMsg, "Ошибка базы данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 AuditLogger.LogError(Program.CurrentUser ?? "system", "ExecuteScalar", ex, sql);
-                ShowError("Не удалось получить данные из базы",
-                    "Проверьте подключение к серверу MySQL и правильность запроса.",
-                    ex);
                 return null;
             }
         }
@@ -147,6 +172,7 @@ namespace Pipe
         {
             int startIndex = text.IndexOf(start) + start.Length;
             int endIndex = text.IndexOf(end, startIndex);
+            if (endIndex == -1) return text.Substring(startIndex).Trim();
             return text.Substring(startIndex, endIndex - startIndex).Trim();
         }
 
@@ -154,18 +180,6 @@ namespace Pipe
         {
             if (string.IsNullOrEmpty(text)) return "";
             return text.Length <= maxLength ? text : text.Substring(0, maxLength) + "...";
-        }
-
-        private static void ShowError(string userMessage, string instruction, Exception ex)
-        {
-            string fullMessage = $"{userMessage}\n\n" +
-                                 $"Инструкция:\n{instruction}\n\n" +
-                                 $"Техническая ошибка:\n{ex.Message}\n\n" +
-                                 $"Стек вызовов:\n{ex.StackTrace}";
-
-            var result = MessageBox.Show(fullMessage, "Ошибка базы данных", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error);
-            if (result == DialogResult.Abort)
-                Environment.Exit(1);
         }
     }
 }

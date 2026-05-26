@@ -94,6 +94,7 @@ namespace Pipe
                                 errors++;
                                 System.Diagnostics.Debug.WriteLine($"Ошибка: {ex.Message}");
                             }
+                        }
 
                         MessageBox.Show($"Импорт трубопроводов завершён.\nДобавлено/обновлено: {imported}\nОшибок: {errors}", "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         RefreshData();
