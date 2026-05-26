@@ -11,27 +11,45 @@ namespace Pipe
     public partial class DefectAnalysisForm : Form
     {
         private DataTable defectsTable;
+        private DataView filteredView;
         private Pipeline currentPipeline;
         private int currentInspectionId = -1;
         private PipeCanvas pipeCanvas;
+        private bool isFiltered = false;
 
         public DefectAnalysisForm()
         {
-            InitializeComponent();
-            InitializeCustomControls();
-            LoadPipelines();
+            try
+            {
+                InitializeComponent();
+                InitializeCustomControls();
+                LoadPipelines();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка инициализации формы анализа дефектов", ex);
+            }
         }
 
         private void InitializeCustomControls()
         {
-            pipeCanvas = new PipeCanvas();
-            pipeCanvas.Dock = DockStyle.Fill;
-            panelCanvas.Controls.Add(pipeCanvas);
+            try
+            {
+                pipeCanvas = new PipeCanvas();
+                pipeCanvas.Dock = DockStyle.Fill;
+                panelCanvas.Controls.Add(pipeCanvas);
 
-            btnImport.Enabled = false;
-            btnFilterCritical.Enabled = false;
-            btnResetFilter.Enabled = false;
-            btnRecalc.Enabled = false;
+                btnImport.Enabled = false;
+                btnFilterCritical.Enabled = false;
+                btnResetFilter.Enabled = false;
+                btnRecalc.Enabled = false;
+                btnResetView.Enabled = false;
+                btnToggleGrid.Enabled = false;
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка инициализации графического контрола", ex);
+            }
         }
 
         private void LoadPipelines()
@@ -44,59 +62,67 @@ namespace Pipe
                 cmbPipeline.ValueMember = "id";
                 cmbPipeline.SelectedIndex = -1;
 
-                ClearInspectionCombo();
-                ClearDefectsDisplay();
+                if (dt.Rows.Count == 0)
+                {
+                    lblPipeInfo.Text = "Нет трубопроводов в базе данных";
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки трубопроводов: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError("Не удалось загрузить список трубопроводов", ex);
             }
-        }
-
-        private void ClearInspectionCombo()
-        {
-            cmbInspection.DataSource = null;
-            cmbInspection.Items.Clear();
-            cmbInspection.Enabled = false;
-            currentInspectionId = -1;
-            currentPipeline = null;
-        }
-
-        private void ClearDefectsDisplay()
-        {
-            if (defectsTable != null)
-            {
-                defectsTable.Clear();
-                defectsTable = null;
-            }
-            dataGridViewDefects.DataSource = null;
-            lblPipeInfo.Text = "Выберите трубопровод";
-            lblProgress.Text = "Нет данных";
-
-            if (pipeCanvas != null)
-            {
-                pipeCanvas.SetDefects(new List<Defect>(), 0);
-            }
-
-            btnImport.Enabled = false;
-            btnFilterCritical.Enabled = false;
-            btnResetFilter.Enabled = false;
-            btnRecalc.Enabled = false;
         }
 
         private void cmbPipeline_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ClearInspectionCombo();
-            ClearDefectsDisplay();
+            try
+            {
+                cmbInspection.DataSource = null;
+                cmbInspection.Items.Clear();
+                cmbInspection.Text = "";
+                cmbInspection.Enabled = false;
+                currentInspectionId = -1;
+                currentPipeline = null;
+                isFiltered = false;
 
-            if (cmbPipeline.SelectedItem == null) return;
+                if (defectsTable != null)
+                {
+                    defectsTable.Clear();
+                    dataGridViewDefects.DataSource = null;
+                }
 
-            DataRowView selectedRow = cmbPipeline.SelectedItem as DataRowView;
-            if (selectedRow == null) return;
+                if (pipeCanvas != null)
+                    pipeCanvas.SetDefects(new List<Defect>(), 0);
 
-            int pid = Convert.ToInt32(selectedRow["id"]);
-            LoadPipelineData(pid);
-            LoadInspections(pid);
+                btnImport.Enabled = false;
+                btnFilterCritical.Enabled = false;
+                btnResetFilter.Enabled = false;
+                btnRecalc.Enabled = false;
+                btnResetView.Enabled = false;
+                btnToggleGrid.Enabled = false;
+                lblProgress.Text = "";
+
+                if (cmbPipeline.SelectedItem == null)
+                {
+                    lblPipeInfo.Text = "Выберите трубопровод";
+                    return;
+                }
+
+                DataRowView selectedRow = cmbPipeline.SelectedItem as DataRowView;
+                if (selectedRow == null)
+                {
+                    lblPipeInfo.Text = "Ошибка загрузки данных";
+                    return;
+                }
+
+                int pid = Convert.ToInt32(selectedRow["id"]);
+                LoadPipelineData(pid);
+                LoadInspections(pid);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка при выборе трубопровода", ex);
+            }
         }
 
         private void LoadPipelineData(int pid)
@@ -106,22 +132,23 @@ namespace Pipe
                 var pipeData = DatabaseHelper.ExecuteQuery("SELECT * FROM pipelines WHERE id=@id", new MySqlParameter("@id", pid));
                 if (pipeData.Rows.Count > 0)
                 {
+                    var row = pipeData.Rows[0];
                     currentPipeline = new Pipeline
                     {
                         Id = pid,
-                        Name = pipeData.Rows[0]["name"].ToString(),
-                        DiameterMm = Convert.ToDouble(pipeData.Rows[0]["diameter_mm"]),
-                        WallThicknessMm = Convert.ToDouble(pipeData.Rows[0]["wall_thickness_mm"]),
-                        YieldStrengthMpa = Convert.ToDouble(pipeData.Rows[0]["yield_strength_mpa"]),
-                        DesignPressureMpa = Convert.ToDouble(pipeData.Rows[0]["design_pressure_mpa"]),
-                        OperatingPressureMpa = Convert.ToDouble(pipeData.Rows[0]["operating_pressure_mpa"])
+                        Name = row["name"].ToString(),
+                        DiameterMm = Convert.ToDouble(row["diameter_mm"]),
+                        WallThicknessMm = Convert.ToDouble(row["wall_thickness_mm"]),
+                        YieldStrengthMpa = Convert.ToDouble(row["yield_strength_mpa"]),
+                        DesignPressureMpa = Convert.ToDouble(row["design_pressure_mpa"]),
+                        OperatingPressureMpa = Convert.ToDouble(row["operating_pressure_mpa"])
                     };
                     lblPipeInfo.Text = $"{currentPipeline.Name} | D={currentPipeline.DiameterMm}мм | δ={currentPipeline.WallThicknessMm}мм | Pпр={currentPipeline.DesignPressureMpa} МПа | Pраб={currentPipeline.OperatingPressureMpa} МПа";
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки данных трубопровода: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError("Ошибка загрузки данных трубопровода", ex);
             }
         }
 
@@ -150,67 +177,74 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки инспекций: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                cmbInspection.Enabled = false;
+                ShowError("Не удалось загрузить список инспекций", ex);
             }
         }
 
         private void cmbInspection_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbInspection.SelectedItem == null)
+            try
             {
-                currentInspectionId = -1;
-                ClearDefectsDisplay();
-                return;
-            }
+                if (cmbInspection.SelectedItem == null)
+                {
+                    currentInspectionId = -1;
+                    btnImport.Enabled = false;
+                    btnFilterCritical.Enabled = false;
+                    btnResetFilter.Enabled = false;
+                    btnRecalc.Enabled = false;
+                    return;
+                }
 
-            DataRowView selectedRow = cmbInspection.SelectedItem as DataRowView;
-            if (selectedRow == null)
+                DataRowView selectedRow = cmbInspection.SelectedItem as DataRowView;
+                if (selectedRow == null)
+                {
+                    currentInspectionId = -1;
+                    return;
+                }
+
+                currentInspectionId = Convert.ToInt32(selectedRow["id"]);
+                LoadDefects();
+                btnImport.Enabled = true;
+                btnResetFilter.Enabled = true;
+            }
+            catch (Exception ex)
             {
-                currentInspectionId = -1;
-                return;
+                ShowError("Ошибка при выборе инспекции", ex);
             }
-
-            currentInspectionId = Convert.ToInt32(selectedRow["id"]);
-            LoadDefects();
         }
 
         private void LoadDefects()
         {
-            if (currentInspectionId == -1 || currentPipeline == null)
-            {
-                ClearDefectsDisplay();
-                return;
-            }
+            if (currentInspectionId == -1 || currentPipeline == null) return;
 
             try
             {
                 string sql = @"SELECT id, distance_m, angle_deg, defect_type, depth_percent, depth_mm, length_mm, width_mm,
                                       allowable_pressure_mpa, erf, severity
                                FROM defects WHERE inspection_id=@id ORDER BY distance_m";
-
                 defectsTable = DatabaseHelper.ExecuteQuery(sql, new MySqlParameter("@id", currentInspectionId));
+
+                // Сбрасываем фильтр
+                isFiltered = false;
                 dataGridViewDefects.DataSource = defectsTable;
 
                 if (defectsTable.Rows.Count > 0)
                 {
-                    dataGridViewDefects.CellFormatting -= dataGridViewDefects_CellFormatting;
-                    dataGridViewDefects.CellFormatting += dataGridViewDefects_CellFormatting;
+                    dataGridViewDefects.CellFormatting -= DataGridViewDefects_CellFormatting;
+                    dataGridViewDefects.CellFormatting += DataGridViewDefects_CellFormatting;
                     dataGridViewDefects.AutoResizeColumns();
 
-                    btnImport.Enabled = true;
                     btnFilterCritical.Enabled = true;
-                    btnResetFilter.Enabled = true;
                     btnRecalc.Enabled = true;
+                    btnResetView.Enabled = true;
+                    btnToggleGrid.Enabled = true;
 
                     lblProgress.Text = $"Загружено дефектов: {defectsTable.Rows.Count}";
                 }
                 else
                 {
                     lblProgress.Text = "Нет дефектов для выбранной инспекции. Нажмите 'Импорт CSV' для загрузки.";
-                    btnImport.Enabled = true;
                     btnFilterCritical.Enabled = false;
-                    btnResetFilter.Enabled = false;
                     btnRecalc.Enabled = false;
                 }
 
@@ -218,54 +252,71 @@ namespace Pipe
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки дефектов: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ClearDefectsDisplay();
+                ShowError("Не удалось загрузить дефекты", ex);
             }
         }
 
-        private void dataGridViewDefects_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        private void DataGridViewDefects_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.RowIndex >= 0 && defectsTable != null && defectsTable.Rows.Count > e.RowIndex)
+            try
             {
-                string sev = defectsTable.Rows[e.RowIndex]["severity"]?.ToString();
-                if (sev == "Critical")
-                    e.CellStyle.BackColor = Color.LightCoral;
-                else if (sev == "High")
-                    e.CellStyle.BackColor = Color.Orange;
-                else if (sev == "Medium")
-                    e.CellStyle.BackColor = Color.LightYellow;
-                else if (sev == "Low")
-                    e.CellStyle.BackColor = Color.LightGreen;
+                DataTable currentTable = dataGridViewDefects.DataSource as DataTable;
+                if (e.RowIndex >= 0 && currentTable != null && currentTable.Rows.Count > e.RowIndex)
+                {
+                    string sev = currentTable.Rows[e.RowIndex]["severity"]?.ToString();
+                    if (sev == "Critical")
+                        e.CellStyle.BackColor = Color.LightCoral;
+                    else if (sev == "High")
+                        e.CellStyle.BackColor = Color.Orange;
+                    else if (sev == "Medium")
+                        e.CellStyle.BackColor = Color.LightYellow;
+                    else if (sev == "Low")
+                        e.CellStyle.BackColor = Color.LightGreen;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"CellFormatting error: {ex.Message}");
             }
         }
 
         private void RefreshPipeCanvas()
         {
-            if (pipeCanvas == null || currentPipeline == null || defectsTable == null || defectsTable.Rows.Count == 0)
+            try
             {
-                if (pipeCanvas != null)
-                    pipeCanvas.SetDefects(new List<Defect>(), 0);
-                return;
-            }
-
-            var list = new List<Defect>();
-            foreach (DataRow row in defectsTable.Rows)
-            {
-                list.Add(new Defect
+                if (pipeCanvas == null || currentPipeline == null || defectsTable == null || defectsTable.Rows.Count == 0)
                 {
-                    DistanceM = Convert.ToDouble(row["distance_m"]),
-                    AngleDeg = Convert.ToInt32(row["angle_deg"]),
-                    Severity = row["severity"]?.ToString(),
-                    LengthMm = Convert.ToDouble(row["length_mm"]),
-                    WidthMm = Convert.ToDouble(row["width_mm"]),
-                    DefectType = row["defect_type"]?.ToString(),
-                    DepthPercent = Convert.ToDouble(row["depth_percent"]),
-                    Erf = row["erf"] == DBNull.Value ? 0 : Convert.ToDouble(row["erf"]),
-                    AllowablePressureMpa = row["allowable_pressure_mpa"] == DBNull.Value ? 0 : Convert.ToDouble(row["allowable_pressure_mpa"])
-                });
+                    pipeCanvas?.SetDefects(new List<Defect>(), 0);
+                    return;
+                }
+
+                var list = new List<Defect>();
+                DataTable sourceTable = dataGridViewDefects.DataSource as DataTable ?? defectsTable;
+
+                foreach (DataRow row in sourceTable.Rows)
+                {
+                    list.Add(new Defect
+                    {
+                        DistanceM = Convert.ToDouble(row["distance_m"]),
+                        AngleDeg = Convert.ToInt32(row["angle_deg"]),
+                        Severity = row["severity"]?.ToString(),
+                        LengthMm = Convert.ToDouble(row["length_mm"]),
+                        WidthMm = Convert.ToDouble(row["width_mm"]),
+                        DefectType = row["defect_type"]?.ToString(),
+                        DepthPercent = Convert.ToDouble(row["depth_percent"]),
+                        Erf = row["erf"] == DBNull.Value ? 0 : Convert.ToDouble(row["erf"]),
+                        AllowablePressureMpa = row["allowable_pressure_mpa"] == DBNull.Value ? 0 : Convert.ToDouble(row["allowable_pressure_mpa"])
+                    });
+                }
+                pipeCanvas.SetDefects(list, currentPipeline.DiameterMm);
             }
-            pipeCanvas.SetDefects(list, currentPipeline.DiameterMm);
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"RefreshPipeCanvas error: {ex.Message}");
+            }
         }
+
+        // ========== ОБРАБОТЧИКИ КНОПОК ==========
 
         private void btnImport_Click(object sender, EventArgs e)
         {
@@ -283,17 +334,19 @@ namespace Pipe
                 {
                     try
                     {
-                        var progress = new Progress<string>(msg => lblProgress.Text = msg);
+                        var progress = new Progress<string>(msg =>
+                        {
+                            lblProgress.Text = msg;
+                            Application.DoEvents();
+                        });
                         var result = Importer.ImportFromCsv(ofd.FileName, currentInspectionId, currentPipeline, progress);
-
                         MessageBox.Show($"Импорт завершён!\n\nОбработано: {result.TotalRows}\nДобавлено: {result.Added}\nПропущено: {result.Skipped}",
                             "Результат импорта", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                         LoadDefects();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Ошибка импорта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ShowError("Ошибка импорта файла", ex);
                         lblProgress.Text = "Ошибка импорта";
                     }
                 }
@@ -302,28 +355,69 @@ namespace Pipe
 
         private void btnFilterCritical_Click(object sender, EventArgs e)
         {
-            if (defectsTable != null && defectsTable.Rows.Count > 0)
+            try
             {
-                var dv = defectsTable.DefaultView;
-                dv.RowFilter = "severity IN ('High','Critical')";
-                dataGridViewDefects.DataSource = dv;
-                lblProgress.Text = $"Фильтр: только High/Critical. Всего: {dv.Count}";
+                if (defectsTable != null && defectsTable.Rows.Count > 0)
+                {
+                    // Создаём фильтрованное представление
+                    filteredView = new DataView(defectsTable);
+                    filteredView.RowFilter = "severity = 'High' OR severity = 'Critical'";
+                    dataGridViewDefects.DataSource = filteredView;
+                    isFiltered = true;
+
+                    int filteredCount = filteredView.Count;
+                    lblProgress.Text = $"Фильтр: только High/Critical. Найдено: {filteredCount} из {defectsTable.Rows.Count}";
+
+                    // Обновляем развёртку
+                    RefreshPipeCanvas();
+
+                    if (filteredCount == 0)
+                    {
+                        MessageBox.Show("Нет дефектов с категориями High или Critical", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Нет данных для фильтрации", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка фильтрации", ex);
             }
         }
 
         private void btnResetFilter_Click(object sender, EventArgs e)
         {
-            if (defectsTable != null)
+            try
             {
-                dataGridViewDefects.DataSource = defectsTable;
-                lblProgress.Text = $"Фильтр сброшен. Всего дефектов: {defectsTable.Rows.Count}";
-                RefreshPipeCanvas();
+                if (defectsTable != null)
+                {
+                    dataGridViewDefects.DataSource = defectsTable;
+                    isFiltered = false;
+                    lblProgress.Text = $"Фильтр сброшен. Всего дефектов: {defectsTable.Rows.Count}";
+                    RefreshPipeCanvas();
+                }
+                else
+                {
+                    MessageBox.Show("Нет данных для сброса фильтра", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка сброса фильтра", ex);
             }
         }
 
         private void btnRecalc_Click(object sender, EventArgs e)
         {
-            if (currentInspectionId == -1 || currentPipeline == null || defectsTable == null || defectsTable.Rows.Count == 0)
+            if (currentInspectionId == -1 || currentPipeline == null)
+            {
+                MessageBox.Show("Сначала выберите трубопровод и инспекцию!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (defectsTable == null || defectsTable.Rows.Count == 0)
             {
                 MessageBox.Show("Нет данных для пересчёта", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -354,14 +448,68 @@ namespace Pipe
                 }
 
                 MessageBox.Show($"Пересчёт завершён. Обновлено дефектов: {updated}", "Готово", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                RefreshPipeCanvas();
 
+                // Если был активен фильтр, переприменяем его
+                if (isFiltered)
+                {
+                    filteredView = new DataView(defectsTable);
+                    filteredView.RowFilter = "severity = 'High' OR severity = 'Critical'";
+                    dataGridViewDefects.DataSource = filteredView;
+                }
+
+                RefreshPipeCanvas();
                 dataGridViewDefects.Refresh();
+                lblProgress.Text = $"Пересчёт завершён. Обновлено: {updated}";
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка пересчёта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError("Ошибка пересчёта", ex);
             }
+        }
+
+        private void btnResetView_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                pipeCanvas?.ResetView();
+                lblProgress.Text = "Вид сброшен к исходному";
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка сброса вида", ex);
+            }
+        }
+
+        private void btnToggleGrid_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                pipeCanvas?.ToggleGrid();
+                // Обновляем текст кнопки
+                if (pipeCanvas != null)
+                {
+                    bool isGridVisible = pipeCanvas.IsGridVisible();
+                    btnToggleGrid.Text = isGridVisible ? "Сетка: Выкл" : "Сетка: Вкл";
+                }
+                lblProgress.Text = "Сетка переключена";
+            }
+            catch (Exception ex)
+            {
+                ShowError("Ошибка переключения сетки", ex);
+            }
+        }
+
+        private void ShowError(string message, Exception ex)
+        {
+            string errorMsg = $"{message}\n\n" +
+                              $"Инструкция:\n" +
+                              $"1. Проверьте подключение к базе данных\n" +
+                              $"2. Убедитесь, что все необходимые таблицы существуют\n" +
+                              $"3. Попробуйте перезапустить программу\n\n" +
+                              $"Техническая ошибка:\n{ex.Message}\n\n" +
+                              $"Стек вызовов:\n{ex.StackTrace}";
+            MessageBox.Show(errorMsg, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            AuditLogger.LogError(Program.CurrentUser, message, ex);
         }
     }
 }

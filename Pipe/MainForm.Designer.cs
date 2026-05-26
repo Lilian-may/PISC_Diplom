@@ -27,61 +27,77 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.lblUser = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblDbStatus = new System.Windows.Forms.ToolStripStatusLabel();
+
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
 
-                        this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            // ========== MENU STRIP ==========
+            this.menuStrip.BackColor = System.Drawing.Color.FromArgb(0, 70, 128);
+            this.menuStrip.ForeColor = System.Drawing.Color.White;
+            this.menuStrip.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.fileMenu, this.referenceMenu, this.analysisMenu, this.reportsMenu, this.helpMenu});
-            this.menuStrip.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(900, 24);
-            this.menuStrip.TabIndex = 0;
 
-                        this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.exitToolStripMenuItem });
+            // Файл
             this.fileMenu.Text = "Файл";
-                        this.exitToolStripMenuItem.Text = "Выход";
-            this.exitToolStripMenuItem.Click += this.exitToolStripMenuItem_Click;
+            this.fileMenu.ForeColor = System.Drawing.Color.White;
+            this.exitToolStripMenuItem.Text = "Выход";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.exitToolStripMenuItem });
 
-                        this.referenceMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                this.pipelinesToolStripMenuItem, this.inspectionsToolStripMenuItem });
+            // Справочники
             this.referenceMenu.Text = "Справочники";
-                        this.pipelinesToolStripMenuItem.Text = "Трубопроводы";
-            this.pipelinesToolStripMenuItem.Click += this.pipelinesToolStripMenuItem_Click;
-                        this.inspectionsToolStripMenuItem.Text = "Инспекции";
-            this.inspectionsToolStripMenuItem.Click += this.inspectionsToolStripMenuItem_Click;
+            this.referenceMenu.ForeColor = System.Drawing.Color.White;
+            this.pipelinesToolStripMenuItem.Text = "Трубопроводы";
+            this.pipelinesToolStripMenuItem.Click += new System.EventHandler(this.pipelinesToolStripMenuItem_Click);
+            this.inspectionsToolStripMenuItem.Text = "Инспекции";
+            this.inspectionsToolStripMenuItem.Click += new System.EventHandler(this.inspectionsToolStripMenuItem_Click);
+            this.referenceMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                this.pipelinesToolStripMenuItem, this.inspectionsToolStripMenuItem });
 
-                        this.analysisMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.defectsToolStripMenuItem });
+            // Анализ
             this.analysisMenu.Text = "Анализ";
-                        this.defectsToolStripMenuItem.Text = "Дефекты";
-            this.defectsToolStripMenuItem.Click += this.defectsToolStripMenuItem_Click;
+            this.analysisMenu.ForeColor = System.Drawing.Color.White;
+            this.defectsToolStripMenuItem.Text = "Дефекты";
+            this.defectsToolStripMenuItem.Click += new System.EventHandler(this.defectsToolStripMenuItem_Click);
+            this.analysisMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.defectsToolStripMenuItem });
 
-                        this.reportsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.reportsToolStripMenuItem });
+            // Отчёты
             this.reportsMenu.Text = "Отчёты";
-                        this.reportsToolStripMenuItem.Text = "Генерация отчётов";
-            this.reportsToolStripMenuItem.Click += this.reportsToolStripMenuItem_Click;
+            this.reportsMenu.ForeColor = System.Drawing.Color.White;
+            this.reportsToolStripMenuItem.Text = "Генерация отчётов";
+            this.reportsToolStripMenuItem.Click += new System.EventHandler(this.reportsToolStripMenuItem_Click);
+            this.reportsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.reportsToolStripMenuItem });
 
-                        this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.aboutToolStripMenuItem });
+            // Справка
             this.helpMenu.Text = "Справка";
-                        this.aboutToolStripMenuItem.Text = "О программе";
-            this.aboutToolStripMenuItem.Click += this.aboutToolStripMenuItem_Click;
+            this.helpMenu.ForeColor = System.Drawing.Color.White;
+            this.aboutToolStripMenuItem.Text = "О программе";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.aboutToolStripMenuItem });
 
-                        this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.lblUser, this.lblDbStatus });
-            this.statusStrip.Location = new System.Drawing.Point(0, 528);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(900, 22);
-                        this.lblUser.Text = "Пользователь:";
-                        this.lblDbStatus.Text = "Подключение:";
+            // ========== STATUS STRIP ==========
+            this.statusStrip.BackColor = System.Drawing.Color.FromArgb(240, 242, 245);
+            this.statusStrip.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.lblUser.Text = "Пользователь:";
+            this.lblDbStatus.Text = "Подключение к БД:";
+            this.lblDbStatus.Spring = true;
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.lblUser, this.lblDbStatus });
 
-                        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            // ========== MAIN FORM ==========
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(900, 550);
+            this.ClientSize = new System.Drawing.Size(1024, 768);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip;
             this.Text = "ВТД Аналитика - ПАО «Газпром»";
+            this.BackColor = System.Drawing.Color.FromArgb(240, 242, 245);
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+
             this.menuStrip.ResumeLayout(false);
             this.statusStrip.ResumeLayout(false);
             this.ResumeLayout(false);
